@@ -1,0 +1,9 @@
+﻿global using Microsoft.AspNetCore.Mvc;
+global using Storage.Application.Extensions;
+global using Storage.Application.Interfaces;
+global using Storage.Application.Models;
+global using Storage.Application.Models.Directories;
+global using Storage.Application.Models.Filters;
+global using Storage.Infrastructure.Extensions;
+global using Storage.WebApi.Controllers.Base;
+global using Storage.WebApi.Extensions;

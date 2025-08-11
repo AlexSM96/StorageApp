@@ -1,0 +1,14 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using Storage.Application.Exceptions;
+global using Storage.Application.Extensions;
+global using Storage.Application.Interfaces;
+global using Storage.Application.Models;
+global using Storage.Application.Models.Directories;
+global using Storage.Application.Models.Reseipts;
+global using Storage.Application.Models.Shipments;
+global using Storage.Application.Services;
+global using Storage.Infrastructure.StorageDb.Interfaces;
+global using StorageApp.Domain.Entities;
+global using StorageApp.Domain.Enums;
+global using Storage.Application.Models.Filters;
