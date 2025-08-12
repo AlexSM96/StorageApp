@@ -6,18 +6,27 @@ import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import CreateShipmentDocumentForm from '../shipmentcomponents/CreateShipmentDocumentForm'
 import UpdateShipmentDocumentForm from "./UpdateShipmentDocumentForm";
+import ShipmentsFilterForm from "../filtercomponents/ShipmentsFilterForm";
 
 export default function ShipmentDocumentsForm() {
     const [shipmentDocuments, setShipmentDocuments] = useState([])
+    const [filter, setFilter] = useState({
+        from: '',
+        to: '',
+        numbers: [],
+        clientIds: [],
+        resourceIds: [],
+        measureUnitIsd: []
+    })
 
     useEffect(() => {
         const fetchData = async () => {
-            let fetchedShipmentDocuments = await fetchShipmentDocuments()
+            let fetchedShipmentDocuments = await fetchShipmentDocuments(filter)
             setShipmentDocuments(fetchedShipmentDocuments)
         }
 
         fetchData()
-    }, [])
+    }, [filter])
 
     const onCreate = async (document) => {
         await createShipmentDocument(document)
@@ -53,7 +62,8 @@ export default function ShipmentDocumentsForm() {
         <div className={"container"}>
             <h2>Отгрузки</h2>
             <br />
-
+            <ShipmentsFilterForm filter={filter} setFilter={setFilter} />
+            <br />
             <CreateShipmentDocumentForm onCreate={onCreate} />
             <br/>
             <Table striped bordered hover size="sm" variant="dark">

@@ -4,7 +4,7 @@ public class ShipmentService(IStorageDbContext context) : IShipmentService
 {
     private readonly IStorageDbContext _context = context;
 
-    public async Task<IEnumerable<ShipmentDocumentDto>> GetAll(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<ShipmentDocumentDto>> GetAll(ShipmentFilterDto filter, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -14,6 +14,7 @@ public class ShipmentService(IStorageDbContext context) : IShipmentService
                 .Include(x => x.ShipmentResources)
                 .ThenInclude(x => x.MeasureUnit)
                 .Include(x => x.Client)
+                .Filter(filter)
                 .AsNoTracking()
                 .Select(x => x.ToDto())
                 .ToListAsync();

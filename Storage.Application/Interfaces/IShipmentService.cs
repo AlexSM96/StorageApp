@@ -2,7 +2,7 @@
 
 public interface IShipmentService
 {
-    public Task<IEnumerable<ShipmentDocumentDto>> GetAll(CancellationToken cancellationToken = default);
+    public Task<IEnumerable<ShipmentDocumentDto>> GetAll(ShipmentFilterDto filter, CancellationToken cancellationToken = default);
 
     public Task<ShipmentDocumentDto?> CreateShipmentDocument(CreateShipmentDocumentRequestDto requestDto, CancellationToken cancellationToken = default);
 

@@ -11,9 +11,7 @@ public class BalanceService(IStorageDbContext context) : IBalanceService
             return await _context.Balances
                 .Include(x => x.MeasureUnit)
                 .Include(x => x.Resourse)
-                .Where(x => filter != null 
-                    && (filter.ResourceIds == null || filter.ResourceIds.Contains(x.ResourceId))
-                    && (filter.MeasureUnitIds == null || filter.MeasureUnitIds.Contains(x.MeasureUnitId)))  
+                .Filter(filter)
                 .Select(x => x.ToDto())
                 .ToListAsync();
         }

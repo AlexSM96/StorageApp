@@ -4,6 +4,26 @@ public class ReceiptService(IStorageDbContext context) : IReceiptService
 {
     private readonly IStorageDbContext _context = context;
 
+    public async Task<IEnumerable<ReceiptDocumentDto>> GetAll(ReceiptFilterDto filter, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await _context.ReceiptDocuments
+                .Include(x => x.ReceiptResources)
+                .ThenInclude(x => x.Resourse)
+                .Include(x => x.ReceiptResources)
+                .ThenInclude(x => x.MeasureUnit)
+                .Filter(filter)
+                .AsNoTracking()
+                .Select(x => x.ToDto())
+                .ToListAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.ToString());
+        }
+    }
+
     public async Task<ReceiptDocumentDto?> CreateReceiptDocument(CreateReceiptDocumentRequestDto requestDto, CancellationToken cancellationToken)
     {
         try
@@ -66,63 +86,6 @@ public class ReceiptService(IStorageDbContext context) : IReceiptService
             await _context.SaveChangesAsync(cancellationToken);
 
             return createdInboundDocument?.ToDto();
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.ToString());
-        }
-    }
-
-    public async Task<bool?> DeleteReceiptDocument(long id, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var inboundDocument = await _context.ReceiptDocuments
-                .Include(x => x.ReceiptResources)
-                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-            if(inboundDocument is null)
-            {
-                return false;
-            }
-
-            foreach (var inboundResource in inboundDocument.ReceiptResources)
-            {
-                var balance = await _context.Balances
-                    .FirstOrDefaultAsync(x => x.ResourceId == inboundResource.ResourceId 
-                        && x.MeasureUnitId == inboundResource.MeasureUnitId, cancellationToken);
-                if (balance is null || balance.Quantity < inboundResource.Quantity)
-                {
-                    return false;
-                }
-
-                balance.Quantity -= inboundResource.Quantity;
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return await _context.ReceiptDocuments
-                 .Where(x => x.Id == id)
-                 .ExecuteDeleteAsync(cancellationToken) > 0;
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.ToString());
-        }
-    }
-
-    public async Task<IEnumerable<ReceiptDocumentDto>> GetAll(CancellationToken cancellationToken)
-    {
-        try
-        {
-            return await _context.ReceiptDocuments
-                .Include(x => x.ReceiptResources)
-                .ThenInclude(x => x.Resourse)
-                .Include(x => x.ReceiptResources)
-                .ThenInclude(x => x.MeasureUnit)
-                .AsNoTracking()
-                .Select(x => x.ToDto())
-                .ToListAsync(cancellationToken);
         }
         catch (Exception e)
         {
@@ -216,6 +179,44 @@ public class ReceiptService(IStorageDbContext context) : IReceiptService
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == inboundDocumentForUpdate.Id))?
                 .ToDto();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.ToString());
+        }
+    }
+
+    public async Task<bool?> DeleteReceiptDocument(long id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var inboundDocument = await _context.ReceiptDocuments
+                .Include(x => x.ReceiptResources)
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            if (inboundDocument is null)
+            {
+                return false;
+            }
+
+            foreach (var inboundResource in inboundDocument.ReceiptResources)
+            {
+                var balance = await _context.Balances
+                    .FirstOrDefaultAsync(x => x.ResourceId == inboundResource.ResourceId
+                        && x.MeasureUnitId == inboundResource.MeasureUnitId, cancellationToken);
+                if (balance is null || balance.Quantity < inboundResource.Quantity)
+                {
+                    return false;
+                }
+
+                balance.Quantity -= inboundResource.Quantity;
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return await _context.ReceiptDocuments
+                 .Where(x => x.Id == id)
+                 .ExecuteDeleteAsync(cancellationToken) > 0;
         }
         catch (Exception e)
         {

@@ -2,7 +2,7 @@
 
 public interface IReceiptService
 {
-    public Task<IEnumerable<ReceiptDocumentDto>> GetAll(CancellationToken cancellationToken = default);
+    public Task<IEnumerable<ReceiptDocumentDto>> GetAll(ReceiptFilterDto filter, CancellationToken cancellationToken = default);
 
     public Task<ReceiptDocumentDto?> CreateReceiptDocument(CreateReceiptDocumentRequestDto requestDto, CancellationToken cancellationToken = default);
 

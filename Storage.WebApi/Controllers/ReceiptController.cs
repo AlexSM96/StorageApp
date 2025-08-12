@@ -8,11 +8,11 @@ public class ReceiptController(IReceiptService receiptService) : ApiBaseControll
     private readonly IReceiptService _receiptService = receiptService;
 
     [HttpGet("getall")]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] ReceiptFilterDto filter, CancellationToken cancellationToken)
     {
         try
         {
-            var receipts = await _receiptService.GetAll(cancellationToken);
+            var receipts = await _receiptService.GetAll(filter, cancellationToken);
             return Ok(new { Receipts = receipts });
         }
         catch (Exception e)

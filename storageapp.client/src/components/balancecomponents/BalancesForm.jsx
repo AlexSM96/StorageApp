@@ -3,9 +3,13 @@ import { fetchBalances } from "../../services/Balances";
 import Table from "react-bootstrap/Table";
 import BalanceFilter from "../filtercomponents/BalanceFilterForm";
 
+
 export default function BalancesForm() {
     const [balances, setBalances] = useState([])
-    const [filter, setFilter] = useState(null)
+    const [filter, setFilter] = useState({
+        resourceIds: [],
+        measureUnitIds: []
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -15,6 +19,9 @@ export default function BalancesForm() {
 
         fetchData()
     }, [filter])
+
+
+    
 
     return (
         <div className={"container"}>

@@ -1,4 +1,8 @@
 ﻿namespace Storage.Application.Models.Filters;
 
-public record BalanceFilterDto(List<long>? ResourceIds, List<long>? MeasureUnitIds);
+public class BalanceFilterDto
+{
+    public List<long>? ResourceIds { get; set; }
+    public List<long>? MeasureUnitIds { get; set; }
+}
 

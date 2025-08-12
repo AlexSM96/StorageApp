@@ -1,7 +1,10 @@
 import { axiosInstance } from './axiosservice/StorageApiAxios'
+import qs from 'qs';
 
-export const fetchReceiptDocuments = async () => {
-    const response = await axiosInstance.get('/receipts/getall')
+export const fetchReceiptDocuments = async (filter) => {
+    const params = qs.stringify(filter, { arrayFormat: 'repeat' })
+    const response = await axiosInstance.get(`/receipts/getall?${params}`)
+
     return response.data.receipts
 }
 

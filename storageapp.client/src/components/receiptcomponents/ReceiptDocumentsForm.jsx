@@ -5,19 +5,27 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import CreateReceiptDocumentForm from "./CreateReceiptDocumentForm";
 import UpdateReceiptDocumentForm from "./UpdateReceiptDocumentForm";
+import ReceiptsFilterForm from "../filtercomponents/ReceiptsFilterForm"
 
 
 export default function ReceiptDocumentsForm() {
     const [receiptDocuments, setReceiptDocumetns] = useState([])
+    const [filter, setFilter] = useState({
+        from: '',
+        to: '',
+        numbers: [],
+        resourceIds: [],
+        measureUnitIsd: []
+    })
 
     useEffect(() => {
         const fetchData = async () => {
-            let fetchedReceiptDocuements = await fetchReceiptDocuments()
+            let fetchedReceiptDocuements = await fetchReceiptDocuments(filter)
             setReceiptDocumetns(fetchedReceiptDocuements)
         }
 
         fetchData()
-    }, [])
+    }, [filter])
 
     const onCreate = async (document) => {
         await createReceiptDocument(document)
@@ -41,8 +49,9 @@ export default function ReceiptDocumentsForm() {
         <div className={"container"}>
             <h2>Поступления</h2>
             <br />
-            <CreateReceiptDocumentForm onCreate={onCreate} />
+            <ReceiptsFilterForm filter={filter} setFilter={setFilter} />
             <br />
+            <CreateReceiptDocumentForm onCreate={onCreate} />
             <br />
             <Table striped bordered hover size="sm" variant="dark">
                 <thead>

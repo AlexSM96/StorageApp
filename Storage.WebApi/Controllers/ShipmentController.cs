@@ -6,11 +6,11 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
     private readonly IShipmentService _shipmentService = shipmentService;
 
     [HttpGet("getall")]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] ShipmentFilterDto filter, CancellationToken cancellationToken)
     {
         try
         {
-            var shipments = await _shipmentService.GetAll(cancellationToken);
+            var shipments = await _shipmentService.GetAll(filter, cancellationToken);
             return Ok(new { Shipments = shipments });
         }
         catch (Exception e)
