@@ -47,8 +47,8 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
         }
     }
 
-    [HttpPut("sign/{id:long}")]
-    public async Task<IActionResult> Sign(long id, CancellationToken cancellationToken)
+    [HttpDelete("sign")]
+    public async Task<IActionResult> Sign([FromQuery] long id, CancellationToken cancellationToken)
     {
         try
         {
@@ -66,8 +66,8 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
         }
     }
 
-    [HttpPut("unsign/{id:long}")]
-    public async Task<IActionResult> Unsign(long id, CancellationToken cancellationToken)
+    [HttpDelete("unsign")]
+    public async Task<IActionResult> Unsign([FromQuery] long id, CancellationToken cancellationToken)
     {
         try
         {
@@ -86,8 +86,8 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
     }
 
 
-    [HttpDelete("delete/{id:long}")]
-    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
+    [HttpDelete("delete")]
+    public async Task<IActionResult> Delete([FromQuery] long id, CancellationToken cancellationToken)
     {
         try
         {

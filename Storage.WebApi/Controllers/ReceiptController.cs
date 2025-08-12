@@ -50,8 +50,8 @@ public class ReceiptController(IReceiptService receiptService) : ApiBaseControll
     }
 
 
-    [HttpDelete("delete/{id:long}")]
-    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
+    [HttpDelete("delete")]
+    public async Task<IActionResult> Delete([FromQuery] long id, CancellationToken cancellationToken)
     {
         try
         {

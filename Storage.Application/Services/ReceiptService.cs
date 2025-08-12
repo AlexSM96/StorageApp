@@ -203,6 +203,9 @@ public class ReceiptService(IStorageDbContext context) : IReceiptService
                 });
             }
 
+            inboundDocumentForUpdate.Number = requestDto.Number;
+            inboundDocumentForUpdate.Date = requestDto.Date.Value;
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return (await _context.ReceiptDocuments

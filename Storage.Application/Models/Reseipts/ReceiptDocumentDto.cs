@@ -1,4 +1,4 @@
 ﻿namespace Storage.Application.Models;
 
-public record ReceiptDocumentDto(string Number, DateTime Date, IEnumerable<ReceiptResourceDto> ReceiptResources);
+public record ReceiptDocumentDto(long Id, string Number, DateTime Date, IEnumerable<ReceiptResourceDto> ReceiptResources);
 

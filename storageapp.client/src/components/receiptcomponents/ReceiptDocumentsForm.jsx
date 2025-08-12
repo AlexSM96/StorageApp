@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { createReceiptDocument, fetchReceiptDocuments, updateReceiptDocument } from "../../services/Receipts"
+import { createReceiptDocument, fetchReceiptDocuments, updateReceiptDocument, deleteReceiptDocument } from "../../services/Receipts"
 import { formatDate } from '../../services/formaters/DateFormater'
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import CreateReceiptDocumentForm from "./CreateReceiptDocumentForm";
+import UpdateReceiptDocumentForm from "./UpdateReceiptDocumentForm";
 
 
 export default function ReceiptDocumentsForm() {
@@ -46,11 +47,12 @@ export default function ReceiptDocumentsForm() {
             <Table striped bordered hover size="sm" variant="dark">
                 <thead>
                     <tr>
-                        <th>Номер</th>
-                        <th>Дата</th>
-                        <th>Ресурс</th>
-                        <th>Еденица измерения</th>
-                        <th>Кол-во</th>
+                        <th width={'20%'}>Номер</th>
+                        <th width={'20%'}>Дата</th>
+                        <th width={'20%'}>Ресурс</th>
+                        <th width={'20%'}>Еденица измерения</th>
+                        <th width={'20%'}>Кол-во</th>
+                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -71,9 +73,14 @@ export default function ReceiptDocumentsForm() {
                                         <td>{res.measureUnit.name}</td>
                                         <td>{res.quantity}</td>
                                         {index === 0 && (
-                                            <td rowSpan={doc.receiptResources.length}>
-                                                <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
-                                            </td>
+                                            <>
+                                                <td rowSpan={doc.receiptResources.length}>
+                                                    <UpdateReceiptDocumentForm document={doc} onUpdate={ onUpdate } />
+                                                </td>
+                                                <td rowSpan={doc.receiptResources.length}>
+                                                    <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
+                                                </td>
+                                            </>
                                         )}
                                     </tr>
                                 ))}

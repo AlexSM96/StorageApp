@@ -22,7 +22,8 @@ internal static class ModelExtension
             receiptResource.Quantity);
 
     public static ReceiptDocumentDto ToDto(this ReceiptDocument receiptDocument)
-        => new ReceiptDocumentDto(receiptDocument.Number, 
+        => new ReceiptDocumentDto(receiptDocument.Id,
+            receiptDocument.Number, 
             receiptDocument.Date, 
             receiptDocument.ReceiptResources.Select(x => x.ToDto()).ToList());
 

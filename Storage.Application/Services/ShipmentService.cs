@@ -119,9 +119,6 @@ public class ShipmentService(IStorageDbContext context) : IShipmentService
                 throw new AlreadyExistException($"{nameof(ShipmentDocument)} with number - {requestDto.Number}");
             }
 
-            documentForUpdate.Number = requestDto.Number;
-            documentForUpdate.Date = requestDto.Date.Value;
-
             await _context.ShipmentResources
                 .Where(x => x.ShipmentDocumentId == requestDto.Id)
                 .ExecuteDeleteAsync(cancellationToken);
@@ -136,6 +133,10 @@ public class ShipmentService(IStorageDbContext context) : IShipmentService
                     Quantity = newResource.Quantity!.Value
                 }, cancellationToken);
             }
+
+            documentForUpdate.Number = requestDto.Number;
+            documentForUpdate.Date = requestDto.Date.Value;
+            documentForUpdate.ClientId = requestDto.ClientId.Value;
 
             await _context.SaveChangesAsync(cancellationToken);
 

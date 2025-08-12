@@ -28,6 +28,25 @@ export const updateShipmentDocument = async (document) => {
     return response.data
 }
 
+
+export const signShipmentDocument = async (document) => {
+    const response = await axiosInstance.delete('/shipments/sign', {
+        params: {
+            id: document.id
+        }
+    })
+    return response.data
+}
+
+export const unSignShipmentDocument = async (document) => {
+    const response = await axiosInstance.delete('/shipments/unsign', {
+        params: {
+            id: document.id
+        }
+    })
+    return response.data
+}
+
 export const deleteShipmentDocument = async (document) => {
     const response = await axiosInstance.delete('/shipments/delete', {
         params: {
