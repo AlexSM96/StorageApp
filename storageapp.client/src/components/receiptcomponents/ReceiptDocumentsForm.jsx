@@ -71,9 +71,21 @@ export default function ReceiptDocumentsForm() {
     }
 
     const onDelete = async (document) => {
-        let isSuccess = await deleteReceiptDocument(document)
-        let fetchedReceiptDocuements = await fetchReceiptDocuments()
-        setReceiptDocumetns(fetchedReceiptDocuements)
+        try {
+            let isSuccess = await deleteReceiptDocument(document)
+            let fetchedReceiptDocuements = await fetchReceiptDocuments()
+            setReceiptDocumetns(fetchedReceiptDocuements)
+        } catch (e) {
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                setErrMsg(`Не удалось обновить документ поступления.`)
+            }
+            else {
+                setErrMsg('Не удалось обновить документ поступления.')
+            }
+        }
+        
     }
 
     return (
@@ -100,30 +112,46 @@ export default function ReceiptDocumentsForm() {
                     {receiptDocuments
                         ? receiptDocuments.map(doc => (
                             <>
-                                {doc.receiptResources.map((res, index) => (
-                                    <tr key={`${doc.id}_${index}_${doc.number}`}>
-                                        {index === 0 && (
-                                            <>
-                                                <td rowSpan={doc.receiptResources.length}>{doc.number}</td>
-                                                <td rowSpan={doc.receiptResources.length}>{formatDate(doc.date)}</td>
-                                            </>
-                                        )}
+                                {doc?.receiptResources?.length > 0
+                                    ? doc.receiptResources.map((res, index) => (
+                                        <tr key={`${doc?.id}_${index}_${doc?.number}`}>
+                                            {index === 0 && (
+                                                <>
+                                                    <td rowSpan={doc?.receiptResources?.length}>{doc.number}</td>
+                                                    <td rowSpan={doc?.receiptResources?.length}>{formatDate(doc.date)}</td>
+                                                </>
+                                            )}
 
-                                        <td>{res.resource.name}</td>
-                                        <td>{res.measureUnit.name}</td>
-                                        <td>{res.quantity}</td>
-                                        {index === 0 && (
-                                            <>
-                                                <td rowSpan={doc.receiptResources.length}>
-                                                    <UpdateReceiptDocumentForm document={doc} onUpdate={onUpdate} errRef={errRef} errMsg={errMsg} />
-                                                </td>
-                                                <td rowSpan={doc.receiptResources.length}>
-                                                    <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
-                                                </td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ))}
+                                            <td>{res?.resource?.name}</td>
+                                            <td>{res?.measureUnit?.name}</td>
+                                            <td>{res?.quantity}</td>
+                                            {index === 0 && (
+                                                <>
+                                                    <td rowSpan={doc?.receiptResources?.length}>
+                                                        <UpdateReceiptDocumentForm document={doc} onUpdate={onUpdate} errRef={errRef} errMsg={errMsg} />
+                                                    </td>
+                                                    <td rowSpan={doc?.receiptResources?.length}>
+                                                        <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
+                                                    </td>
+                                                </>
+                                            )}
+                                        </tr>
+                                    
+                                    ))
+                                    : <tr>
+                                        <td>{doc.number}</td>
+                                        <td>{formatDate(doc.date)}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <UpdateReceiptDocumentForm document={doc} onUpdate={onUpdate} errRef={errRef} errMsg={errMsg} />
+                                        </td>
+                                        <td>
+                                            <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
+                                        </td>
+                                      </tr> 
+                                 }
                             </>
                         ))
                         : <tr></tr>

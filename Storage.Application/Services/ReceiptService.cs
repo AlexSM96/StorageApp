@@ -42,7 +42,7 @@ public class ReceiptService(IStorageDbContext context) : IReceiptService
             {
                 Number = requestDto.Number,
                 Date = requestDto.Date.Value,
-                ReceiptResources = requestDto.ReceiptResources
+                ReceiptResources = requestDto.ReceiptResources!
                     .Where(x => x.ResourceId is not null && x.MeasureUnitId is not null && x.Quantity is not null)
                     .Select(x => new ReceiptResource()
                     {

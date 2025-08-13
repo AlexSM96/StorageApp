@@ -21,7 +21,7 @@ export default function CreateReceiptDocumentForm({ onCreate, errRef, errMsg }) 
 
     const handleAddRow = () => {
         const newRow = { id: Date.now(), resource: '', measureUnit: '', quantity: '' };
-        setRows([...rows, newRow]);
+        setRows([...rows ?? [], newRow]);
     };
 
     const handleRemoveRow = (id) => {
