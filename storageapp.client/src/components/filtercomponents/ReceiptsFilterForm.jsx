@@ -3,14 +3,35 @@ import { useState } from 'react';
 import { fetchResources } from '../../services/Resources';
 import { fetchMeasureUnits } from '../../services/MeasureUnits'
 import { fetchReceiptDocuments } from '../../services/Receipts'
-import { formatDateISO } from '../../services/formaters/DateFormater'
 import Form from 'react-bootstrap/Form';
+import Select from 'react-select';
 
 export default function ReceiptsFilterForm({ filter, setFilter }) {
     const [receipts, setReceipts] = useState([])
     const [resources, setResources] = useState([])
     const [units, setUnits] = useState([])
+    const [resourceSelectedOptions, setResourceSelectedOptions] = useState([]);
+    const [unitSelectedOptions, setUnitSelectedOptions] = useState([])
+    const [numberSelectedOptions, setNumberSelectedOptions] = useState([])
 
+    const resourceOptions = resources.map(x => ({ value: x.id, label: x.name }));
+    const unitOptions = units.map(x => ({ value: x.id, label: x.name }));
+    const numberOptions = receipts.map(x => ({ value: x.number, label: x.number }))
+
+    const handleResourceChange = (selected) => {
+        setResourceSelectedOptions(selected);
+        setFilter({ ...filter, resourceIds: selected?.map(option => option.value).filter(item => item != null && item !== '') })
+    };
+
+    const handleUnitChange = (selected) => {
+        setUnitSelectedOptions(selected)
+        setFilter({ ...filter, measureUnitIds: selected?.map(option => option.value).filter(item => item != null && item !== '') })
+    };
+
+    const handleNumberChange = (selected) => {
+        setNumberSelectedOptions(selected);
+        setFilter({ ...filter, numbers: selected?.map(option => option.value).filter(item => item != null && item !== '')})
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,9 +49,9 @@ export default function ReceiptsFilterForm({ filter, setFilter }) {
 
     return (
         <div className={'container'}>
-            <div className={'row'}>
-                <div className={'col'}>
-                    <label>Дата с</label>
+            <div className={'row'} >
+                <div className={'col'} style={{ width: 300, margin: '0 auto' }}>
+                    <p>Дата с</p>
                     <Form.Control
                         type="date"
                         onChange={(event) =>
@@ -38,8 +59,8 @@ export default function ReceiptsFilterForm({ filter, setFilter }) {
                         }
                     />
                 </div>
-                <div className={'col'}>
-                    <label>Дата по</label>
+                <div className={'col'} style={{ width: 300, margin: '0 auto' }}>
+                    <p>Дата по</p>
                     <Form.Control
                         type="date"
                         onChange={(event) => 
@@ -47,54 +68,37 @@ export default function ReceiptsFilterForm({ filter, setFilter }) {
                         }
                     />
                 </div>
-                <div className={'col'}>
-                    <label>Номер поступления</label>
-                    <Form.Select
-                        multiple={true}
-                        value={filter?.numbers || []}
-                        onChange={(event) => {
-                            const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value).filter(item => item != null && item !== '');
-                            setFilter({ ...filter, numbers: selectedOptions });
-                        }}
-                    >
-                        <option value={''}>--выберите номер поступления--</option>
-                        {receipts?.map(r => (
-                            <option key={r.id} value={r.number}>{r.number}</option>
-                        ))}
-                    </Form.Select>
+                <div className={'col'} style={{ width: 300, margin: '0 auto' }}>
+                    <p>Выберите номер</p>
+                    <Select
+                        options={numberOptions}
+                        isMulti
+                        value={numberSelectedOptions}
+                        onChange={handleNumberChange}
+                        placeholder="Выберите..."
+                    />
                 </div>
-                <div className={'col'}>
-                    <label>Ресурс</label>
-                    <Form.Select
-                        multiple={true}
-                        value={filter?.resourceIds || []}
-                        onChange={(event) => {
-                            const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value).filter(item => item != null && item !== '');
-                            setFilter({ ...filter, resourceIds: selectedOptions });
-                        }}
-                    >
-                        <option value={''}>--выберите ресурс--</option>
-                        {resources?.map(r => (
-                            <option key={r.id} value={r.id}>{r.name}</option>
-                        ))}
-                    </Form.Select>
+                <div className={'col'} style={{ width: 300, margin: '0 auto' }}>
+                    <p>Выберите ресурс</p>
+                    <Select
+                        options={resourceOptions}
+                        isMulti
+                        value={resourceSelectedOptions}
+                        onChange={handleResourceChange}
+                        placeholder="Выберите..."
+                    />
                 </div>
-                <div className={'col'}>
-                    <label>Еденица измерения</label>
-                    <Form.Select
-                        multiple={true}
-                        value={filter?.measureUnitIds || []}
-                        onChange={(event) => {
-                            const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value).filter(item => item != null && item !== '');
-                            setFilter({ ...filter, measureUnitIds: selectedOptions });
-                        }}
-                    >
-                        <option value={''}>--выберите еденицу измерения--</option>
-                        {units?.map(u => (
-                            <option key={u.id} value={u.id}>{u.name}</option>
-                        ))}
-                    </Form.Select>
+                <div className={'col'} style={{ width: 300, margin: '0 auto' }}>
+                    <p>Выберите еденицу измерения</p>
+                    <Select
+                        options={unitOptions}
+                        isMulti
+                        value={unitSelectedOptions}
+                        onChange={handleUnitChange}
+                        placeholder="Выберите..."
+                    />
                 </div>
+               
             </div>
         </div>
     );
