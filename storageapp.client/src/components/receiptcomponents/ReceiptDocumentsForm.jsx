@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createReceiptDocument, fetchReceiptDocuments, updateReceiptDocument, deleteReceiptDocument } from "../../services/Receipts"
 import { formatDate } from '../../services/formaters/DateFormater'
 import Table from "react-bootstrap/Table";
@@ -10,6 +10,8 @@ import ReceiptsFilterForm from "../filtercomponents/ReceiptsFilterForm"
 
 export default function ReceiptDocumentsForm() {
     const [receiptDocuments, setReceiptDocumetns] = useState([])
+    const errRef = useRef();
+    const [errMsg, setErrMsg] = useState('');
     const [filter, setFilter] = useState({
         from: '',
         to: '',
@@ -28,15 +30,44 @@ export default function ReceiptDocumentsForm() {
     }, [filter])
 
     const onCreate = async (document) => {
-        await createReceiptDocument(document)
-        let fetchedReceiptDocuements = await fetchReceiptDocuments()
-        setReceiptDocumetns(fetchedReceiptDocuements)
+        try {
+            await createReceiptDocument(document)
+            let fetchedReceiptDocuements = await fetchReceiptDocuments()
+            setReceiptDocumetns(fetchedReceiptDocuements)
+        } catch (e){
+            if (!e?.response){
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                const errors = e.response.data.errors;
+                const errorNumber = errors.Number ? errors.Number.join(', ') : '';
+                const errorDate = errors.Date ? errors.Date.join(', ') : '';
+                setErrMsg(`Не удалось создать документ поступления. ${errorNumber}. ${errorDate}.`)
+            }
+            else {
+                setErrMsg('Не удалось создать документ поступления.')
+            }
+        }
+        
     }
 
     const onUpdate = async (document) => {
-        let updatedShipmentDocument = await updateReceiptDocument(document)
-        let fetchedReceiptDocuements = await fetchReceiptDocuments()
-        setReceiptDocumetns(fetchedReceiptDocuements)
+        try {
+            let updatedShipmentDocument = await updateReceiptDocument(document)
+            let fetchedReceiptDocuements = await fetchReceiptDocuments()
+            setReceiptDocumetns(fetchedReceiptDocuements)
+        } catch (e) {
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                const errors = e.response.data.errors;
+                const errorNumber = errors.Number ? errors.Number.join(', ') : '';
+                const errorDate = errors.Date ? errors.Date.join(', ') : '';
+                setErrMsg(`Не удалось обновить документ поступления. ${errorNumber}. ${errorDate}.`)
+            }
+            else {
+                setErrMsg('Не удалось обновить документ поступления.')
+            }
+        }
     }
 
     const onDelete = async (document) => {
@@ -51,7 +82,7 @@ export default function ReceiptDocumentsForm() {
             <br />
             <ReceiptsFilterForm filter={filter} setFilter={setFilter} />
             <br />
-            <CreateReceiptDocumentForm onCreate={onCreate} />
+            <CreateReceiptDocumentForm onCreate={onCreate} errRef={errRef} errMsg={errMsg} />
             <br />
             <Table striped bordered hover size="sm" variant="dark">
                 <thead>
@@ -84,7 +115,7 @@ export default function ReceiptDocumentsForm() {
                                         {index === 0 && (
                                             <>
                                                 <td rowSpan={doc.receiptResources.length}>
-                                                    <UpdateReceiptDocumentForm document={doc} onUpdate={ onUpdate } />
+                                                    <UpdateReceiptDocumentForm document={doc} onUpdate={onUpdate} errRef={errRef} errMsg={errMsg} />
                                                 </td>
                                                 <td rowSpan={doc.receiptResources.length}>
                                                     <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>

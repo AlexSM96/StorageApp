@@ -17,7 +17,7 @@ public class ReceiptController(IReceiptService receiptService) : ApiBaseControll
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -26,12 +26,14 @@ public class ReceiptController(IReceiptService receiptService) : ApiBaseControll
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var inboundDocument = await _receiptService.CreateReceiptDocument(requestDto, cancellationToken);
             return Ok(new { InboundDocument = inboundDocument });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -40,12 +42,14 @@ public class ReceiptController(IReceiptService receiptService) : ApiBaseControll
     {
         try
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             var inboundDocument = await _receiptService.UpdateReceiptDocument(requestDto, cancellationToken);
             return Ok(new { InboundDocument = inboundDocument });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -65,7 +69,7 @@ public class ReceiptController(IReceiptService receiptService) : ApiBaseControll
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 }

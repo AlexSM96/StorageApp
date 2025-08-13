@@ -15,7 +15,7 @@ public class MeasureUnitController(IDirectoryService<MeasureUnitDto> unitService
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -24,12 +24,14 @@ public class MeasureUnitController(IDirectoryService<MeasureUnitDto> unitService
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var unit = await _unitService.Create(request.Name, cancellationToken);
             return Ok(new { Unit = unit });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -38,12 +40,14 @@ public class MeasureUnitController(IDirectoryService<MeasureUnitDto> unitService
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var unit = await _unitService.Update(requestDto, cancellationToken);
             return Ok(new { Unit = unit });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -52,12 +56,14 @@ public class MeasureUnitController(IDirectoryService<MeasureUnitDto> unitService
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var unit = await _unitService.Archive(requestDto, cancellationToken);
             return Ok(new { Unit = unit });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -71,7 +77,7 @@ public class MeasureUnitController(IDirectoryService<MeasureUnitDto> unitService
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 }

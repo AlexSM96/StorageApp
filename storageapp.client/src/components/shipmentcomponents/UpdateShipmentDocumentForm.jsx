@@ -3,11 +3,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
 import Table from "react-bootstrap/Table";
 import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
 import { fetchClients } from '../../services/Clients'
 import { fetchBalances } from '../../services/Balances'
 import { formatDateISO } from '../../services/formaters/DateFormater'
 
-export default function UpdateShipmentDocumentForm({ document, onUpdate }) {
+export default function UpdateShipmentDocumentForm({ document, onUpdate, errRef, errMsg }) {
     const [doc, setDoc] = useState(document);
     const [balances, setBalances] = useState([]);
     const [clients, setClients] = useState([]);
@@ -80,6 +81,11 @@ export default function UpdateShipmentDocumentForm({ document, onUpdate }) {
                     </Modal.Header>
 
                     <Modal.Body>
+                        {errMsg ? (
+                            <Alert key={'danger'} variant={'danger'} ref={errRef} dismissible>
+                                {errMsg}
+                            </Alert>
+                        ) : <></>}
                         <Form.Control
                             size="lg"
                             type="text"

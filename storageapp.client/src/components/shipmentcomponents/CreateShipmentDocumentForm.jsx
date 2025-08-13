@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
 import Table from "react-bootstrap/Table";
 import Modal from 'react-bootstrap/Modal';
 import { fetchClients } from '../../services/Clients'
 import { fetchBalances } from '../../services/Balances'
+import Alert from 'react-bootstrap/Alert';
 
-export default function CreateShipmentDocumentForm({ onCreate }) {
+export default function CreateShipmentDocumentForm({ onCreate, errRef, errMsg }) {
     const [doc, setDoc] = useState({ number: '', date: '', clientId: '', shipmentResources: [] });
     const [balances, setBalances] = useState([]);
     const [clients, setClients] = useState([]);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
     const [rows, setRows] = useState([]);
 
     const handleQuantityChange = (resourceId, measureUnitId, value) => {
@@ -32,7 +32,7 @@ export default function CreateShipmentDocumentForm({ onCreate }) {
 
     const onSubmit = (event) => {
         event.preventDefault();
-
+        
         const shipmentResources = rows.map(r => ({
             resourceId: r.resourceId,
             measureUnitId: r.measureUnitId,
@@ -57,14 +57,21 @@ export default function CreateShipmentDocumentForm({ onCreate }) {
     return (
         <div>
             <Button variant="primary" onClick={handleShow}>Добавить</Button>
-
+            
             <Form onSubmit={onSubmit}>
+               
                 <Modal size="lg" show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Добавить документ отгрузки</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
+                        {errMsg ? (
+                            <Alert key={'danger'} variant={'danger'} ref={errRef} dismissible>
+                                {errMsg}
+                            </Alert>
+                        ) : <></>}
+                        
                         <Form.Control
                             size="lg"
                             type="text"

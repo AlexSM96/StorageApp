@@ -24,12 +24,14 @@ public class ClientController(IClientService clientService) : ApiBaseController
     {
         try
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             var client = await _clientService.Create(requestDto, cancellationToken);
             return Ok(new { Client = client });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -38,12 +40,14 @@ public class ClientController(IClientService clientService) : ApiBaseController
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var client = await _clientService.Update(requestDto, cancellationToken);
             return Ok(new { Client = client });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -52,12 +56,14 @@ public class ClientController(IClientService clientService) : ApiBaseController
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var client = await _clientService.Archive(requestDto, cancellationToken);
             return Ok(new { Clients = client });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -71,7 +77,7 @@ public class ClientController(IClientService clientService) : ApiBaseController
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 }

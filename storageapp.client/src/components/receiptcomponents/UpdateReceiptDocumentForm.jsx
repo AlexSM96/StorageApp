@@ -3,11 +3,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
 import Table from "react-bootstrap/Table";
 import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
 import { fetchResources } from '../../services/Resources';
 import { fetchMeasureUnits } from '../../services/MeasureUnits';
 import { formatDateISO } from '../../services/formaters/DateFormater';
 
-export default function UpdateReceiptDocumentForm({ document, onUpdate }) {
+export default function UpdateReceiptDocumentForm({ document, onUpdate, errRef, errMsg }) {
     const [doc, setDoc] = useState(document);
     const [show, setShow] = useState(false);
     const [resources, setResources] = useState([]);
@@ -73,6 +74,11 @@ export default function UpdateReceiptDocumentForm({ document, onUpdate }) {
                         <Modal.Title>Изменить документ поступления</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        {errMsg ? (
+                            <Alert key={'danger'} variant={'danger'} ref={errRef} dismissible>
+                                {errMsg}
+                            </Alert>
+                        ) : <></>}
                         <Form.Control
                             size="lg"
                             type="text"

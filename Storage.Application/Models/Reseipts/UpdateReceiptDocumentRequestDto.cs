@@ -1,4 +1,12 @@
-﻿namespace Storage.Application.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdateReceiptDocumentRequestDto(long Id, string? Number, DateTime? Date, IEnumerable<UpdateReceiptResourceRequestDto> ReceiptResources);
+namespace Storage.Application.Models;
+
+public record UpdateReceiptDocumentRequestDto(
+    long Id,
+    [Required(ErrorMessage = "Укажите номер документа поступления")]
+    string? Number,
+    [Required(ErrorMessage = "Укажите дату документа поступления")]
+    DateTime? Date, 
+    IEnumerable<UpdateReceiptResourceRequestDto> ReceiptResources);
 

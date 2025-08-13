@@ -1,4 +1,11 @@
-﻿namespace Storage.Application.Models.Reseipts;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record CreateReceiptDocumentRequestDto(string? Number, DateTime? Date, IEnumerable<CreateReceiptResourceRequestDto> ReceiptResources);
+namespace Storage.Application.Models.Reseipts;
+
+public record CreateReceiptDocumentRequestDto(
+    [Required (ErrorMessage = "Укажите номер документа поступления")]
+    string? Number,
+    [Required (ErrorMessage = "Укажите дату документа поступления")]
+    DateTime? Date,
+    IEnumerable<CreateReceiptResourceRequestDto>? ReceiptResources);
 

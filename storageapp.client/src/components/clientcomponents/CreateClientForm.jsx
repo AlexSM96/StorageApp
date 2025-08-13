@@ -1,13 +1,24 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
 
 export default function CreateClientForm({ onCreate }) {
     const [client, setClient] = useState(null)
+    const [errMsg, setErrMsg] = useState('')
+    const errRef = useRef();
     const onSubmit = (event) => {
         event.preventDefault()
         setClient(null)
-        onCreate(client)
+        try {
+            onCreate(client)
+        } catch (err) {
+            if (!err?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else {
+                setErrMsg('Не удалось создать клиента')
+            }
+        }
+
     }
 
     return (

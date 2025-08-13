@@ -15,7 +15,7 @@ public class BalanceController(IBalanceService balanceService) : ApiBaseControll
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 }

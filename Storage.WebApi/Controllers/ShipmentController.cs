@@ -15,7 +15,7 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -24,12 +24,14 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
     {
         try
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             var shipmentDocument = await _shipmentService.CreateShipmentDocument(requestDto, cancellationToken);
             return Ok(new { ShipmentDocument = shipmentDocument });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -38,12 +40,14 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var shipmentDocument = await _shipmentService.UpdateShipmentDocument(requestDto, cancellationToken);
             return Ok(new { ShipmentDocument = shipmentDocument });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -62,7 +66,7 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -81,7 +85,7 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -101,7 +105,7 @@ public class ShipmentController(IShipmentService shipmentService) : ApiBaseContr
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 }

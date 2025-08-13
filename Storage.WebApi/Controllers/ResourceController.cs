@@ -15,7 +15,7 @@ public class ResourceController(IDirectoryService<ResourceDto> resourceService) 
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -24,12 +24,14 @@ public class ResourceController(IDirectoryService<ResourceDto> resourceService) 
     {
         try
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             var resource = await _resourceService.Create(request.Name, cancellationToken);
             return Ok(new { Resource = resource });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -38,12 +40,14 @@ public class ResourceController(IDirectoryService<ResourceDto> resourceService) 
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var resource = await _resourceService.Update(requestDto, cancellationToken);
             return Ok(new { Resource = resource });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -52,12 +56,14 @@ public class ResourceController(IDirectoryService<ResourceDto> resourceService) 
     {
         try
         {
+            if (!ModelState.IsValid) return BadRequest(requestDto);
+
             var resource = await _resourceService.Archive(requestDto, cancellationToken);
             return Ok(new { Resource = resource });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 
@@ -71,7 +77,7 @@ public class ResourceController(IDirectoryService<ResourceDto> resourceService) 
         }
         catch (Exception e)
         {
-            return BadRequest(new { Error = e.ToString() });
+            return BadRequest(new { Error = e.Message });
         }
     }
 }

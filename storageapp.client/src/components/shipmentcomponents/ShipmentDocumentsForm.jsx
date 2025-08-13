@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createShipmentDocument, updateShipmentDocument, deleteShipmentDocument, fetchShipmentDocuments, signShipmentDocument, unSignShipmentDocument } from '../../services/Shipments'
 import { formatDate } from '../../services/formaters/DateFormater'
 import Table from "react-bootstrap/Table";
@@ -18,6 +18,8 @@ export default function ShipmentDocumentsForm() {
         resourceIds: [],
         measureUnitIsd: []
     })
+    const errRef = useRef();
+    const [errMsg, setErrMsg] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,15 +31,45 @@ export default function ShipmentDocumentsForm() {
     }, [filter])
 
     const onCreate = async (document) => {
-        await createShipmentDocument(document)
-        let fetchedShipmentDocuments = await fetchShipmentDocuments()
-        setShipmentDocuments(fetchedShipmentDocuments)
+        try {
+            await createShipmentDocument(document)
+            let fetchedShipmentDocuments = await fetchShipmentDocuments()
+            setShipmentDocuments(fetchedShipmentDocuments)
+        } catch (e) {
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) { 
+                const errors = e.response.data.errors;
+                const errorClient = errors.ClientId ? errors.ClientId.join(', ') : '';
+                const errorNumber = errors.Number ? errors.Number.join(', ') : '';
+                const errorDate = errors.Date ? errors.Date.join(', ') : '';
+                setErrMsg(`Не удалось создать документ отгрузки. ${errorClient}. ${errorNumber}. ${errorDate}.`)
+            }
+            else {
+                setErrMsg('Не удалось создать документ отгрузки')
+            }
+        }
     }
 
     const onUpdate = async (document) => {
-        let updatedShipmentDocument = await updateShipmentDocument(document)
-        let fetchedShipmentDocuments = await fetchShipmentDocuments()
-        setShipmentDocuments(fetchedShipmentDocuments)
+        try {
+            let updatedShipmentDocument = await updateShipmentDocument(document)
+            let fetchedShipmentDocuments = await fetchShipmentDocuments()
+            setShipmentDocuments(fetchedShipmentDocuments)
+        } catch(e) {
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                const errors = e.response.data.errors;
+                const errorClient = errors.ClientId ? errors.ClientId.join(', ') : '';
+                const errorNumber = errors.Number ? errors.Number.join(', ') : '';
+                const errorDate = errors.Date ? errors.Date.join(', ') : '';
+                setErrMsg(`Не удалось обновить документ отгрузки. ${errorClient}. ${errorNumber}. ${errorDate}.`)
+            }
+            else {
+                setErrMsg('Не удалось обновить документ отгрузки')
+            }
+        }
     }
 
     const onSign = async (document) => {
@@ -64,7 +96,7 @@ export default function ShipmentDocumentsForm() {
             <br />
             <ShipmentsFilterForm filter={filter} setFilter={setFilter} />
             <br />
-            <CreateShipmentDocumentForm onCreate={onCreate} />
+            <CreateShipmentDocumentForm onCreate={onCreate} errRef={errRef} errMsg={errMsg} />
             <br/>
             <Table striped bordered hover size="sm" variant="dark">
                 <thead>
@@ -106,7 +138,7 @@ export default function ShipmentDocumentsForm() {
                                         {index === 0 && (
                                             <>
                                                 <td rowSpan={doc?.shipmentResources?.length}>
-                                                    <UpdateShipmentDocumentForm document={doc} onUpdate={onUpdate} />
+                                                    <UpdateShipmentDocumentForm document={doc} onUpdate={onUpdate} errRef={errRef} errMsg={errMsg} />
                                                 </td>
                                                 <td rowSpan={doc?.shipmentResources?.length}>
                                                     {doc?.shipmentStatus === 1

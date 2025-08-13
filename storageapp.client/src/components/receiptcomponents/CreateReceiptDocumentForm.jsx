@@ -3,10 +3,11 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
 import Table from "react-bootstrap/Table";
 import Modal from 'react-bootstrap/Modal';
+import Alert from 'react-bootstrap/Alert';
 import { fetchResources } from '../../services/Resources';
 import { fetchMeasureUnits } from '../../services/MeasureUnits';
 
-export default function CreateReceiptDocumentForm({ onCreate }) {
+export default function CreateReceiptDocumentForm({ onCreate, errRef, errMsg }) {
     const [doc, setDoc] = useState({ number: '', date: '', receiptResources: [] });
     const [resources, setResources] = useState([]);
     const [units, setUnits] = useState([]);
@@ -29,10 +30,10 @@ export default function CreateReceiptDocumentForm({ onCreate }) {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        const receiptResources = rows.map(row => ({
-            resourceId: row.resource,
-            measureUnitId: row.measureUnit,
-            quantity: row.quantity,
+        const receiptResources = rows?.map(row => ({
+            resourceId: row?.resource,
+            measureUnitId: row?.measureUnit,
+            quantity: row?.quantity,
         }));
 
         setDoc(prevDoc => ({
@@ -70,6 +71,11 @@ export default function CreateReceiptDocumentForm({ onCreate }) {
                         <Modal.Title>Добавить документ поступления</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                            {errMsg ? (
+                                <Alert key={'danger'} variant={'danger'} ref={errRef} dismissible>
+                                    {errMsg}
+                                </Alert>
+                            ) : <></>}
                             <Form.Control
                                 size="lg"
                                 type="text"
@@ -105,7 +111,7 @@ export default function CreateReceiptDocumentForm({ onCreate }) {
                                                 <Form.Select
                                                     value={row.resource}
                                                     onChange={(e) => {
-                                                        const newRows = rows.map(r =>
+                                                        const newRows = rows?.map(r =>
                                                             r.id === row.id ? { ...r, resource: e.target.value} : r
                                                         );
                                                         setRows(newRows);
@@ -122,7 +128,7 @@ export default function CreateReceiptDocumentForm({ onCreate }) {
                                                 <Form.Select
                                                     value={row.measureUnit}
                                                     onChange={(e) => {
-                                                        const newRows = rows.map(r =>
+                                                        const newRows = rows?.map(r =>
                                                             r.id === row.id ? { ...r, measureUnit: e.target.value } : r
                                                         );
                                                         setRows(newRows);
@@ -141,7 +147,7 @@ export default function CreateReceiptDocumentForm({ onCreate }) {
                                                     type="number"
                                                     value={row.quantity}
                                                     onChange={(e) => {
-                                                        const newRows = rows.map(r =>
+                                                        const newRows = rows?.map(r =>
                                                             r.id === row.id ? { ...r, quantity: e.target.value } : r
                                                         );
                                                         setRows(newRows);
