@@ -4,6 +4,7 @@ import { formatDate } from '../../services/formaters/DateFormater'
 import Table from "react-bootstrap/Table";
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 import CreateShipmentDocumentForm from '../shipmentcomponents/CreateShipmentDocumentForm'
 import UpdateShipmentDocumentForm from "./UpdateShipmentDocumentForm";
 import ShipmentsFilterForm from "../filtercomponents/ShipmentsFilterForm";
@@ -73,21 +74,56 @@ export default function ShipmentDocumentsForm() {
     }
 
     const onSign = async (document) => {
-        let signedShipmentDocument = await signShipmentDocument(document);
-        let fetchedShipmentDocuments = await fetchShipmentDocuments()
-        setShipmentDocuments(fetchedShipmentDocuments)
+        try {
+            let signedShipmentDocument = await signShipmentDocument(document);
+            let fetchedShipmentDocuments = await fetchShipmentDocuments()
+            setShipmentDocuments(fetchedShipmentDocuments)
+        } catch (e) {
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                setErrMsg(`Не удалось подписать документ отгрузки.`)
+            }
+            else {
+                setErrMsg('Не удалось подписать документ отгрузки')
+            }
+        }
+        
     }
 
     const onUnSign = async (document) => {
-        let unSignedShipmentDocument = await unSignShipmentDocument(document);
-        let fetchedShipmentDocuments = await fetchShipmentDocuments()
-        setShipmentDocuments(fetchedShipmentDocuments)
+        try {
+            let unSignedShipmentDocument = await unSignShipmentDocument(document);
+            let fetchedShipmentDocuments = await fetchShipmentDocuments()
+            setShipmentDocuments(fetchedShipmentDocuments)
+        } catch(e){
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                setErrMsg(`Не удалось отозвать документ отгрузки.`)
+            }
+            else {
+                setErrMsg('Не удалось отозвать документ отгрузки')
+            }
+        }
+        
     }
 
     const onDelete = async (document) => {
-        let isSuccess = await deleteShipmentDocument(document)
-        let fetchedShipmentDocuments = await fetchShipmentDocuments()
-        setShipmentDocuments(fetchedShipmentDocuments)
+        try {
+            let isSuccess = await deleteShipmentDocument(document)
+            let fetchedShipmentDocuments = await fetchShipmentDocuments()
+            setShipmentDocuments(fetchedShipmentDocuments)
+        } catch (e) {
+            if (!e?.response) {
+                setErrMsg('Сервер не отвечает')
+            } else if (e.response.status === 400) {
+                setErrMsg(`Не удалось удалить документ отгрузки.`)
+            }
+            else {
+                setErrMsg('Не удалось удалить документ отгрузки')
+            }
+        }
     }
 
     return (
@@ -97,7 +133,7 @@ export default function ShipmentDocumentsForm() {
             <ShipmentsFilterForm filter={filter} setFilter={setFilter} />
             <br />
             <CreateShipmentDocumentForm onCreate={onCreate} errRef={errRef} errMsg={errMsg} />
-            <br/>
+            <br />
             <Table striped bordered hover size="sm" variant="dark">
                 <thead>
                     <tr>
@@ -109,7 +145,6 @@ export default function ShipmentDocumentsForm() {
                         <th width={'20%'}>Ресурс</th>
                         <th width={'20%'}>Еденица измерения</th>
                         <th width={'20%'}>Кол-во</th>
-                        <th></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -139,18 +174,17 @@ export default function ShipmentDocumentsForm() {
                                             <>
                                                 <td rowSpan={doc?.shipmentResources?.length}>
                                                     <UpdateShipmentDocumentForm document={doc} onUpdate={onUpdate} errRef={errRef} errMsg={errMsg} />
+                                                    <br />
+                                                    {doc?.shipmentStatus !== 1
+                                                        ? <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
+                                                        : <></>
+                                                    } 
                                                 </td>
                                                 <td rowSpan={doc?.shipmentResources?.length}>
                                                     {doc?.shipmentStatus === 1
                                                         ? <Button variant="danger" onClick={() => onUnSign(doc)}>Отозвать</Button>
                                                         : <Button variant="success" onClick={() => onSign(doc)}>Сохранить и подписать</Button>
                                                     }
-                                                </td>
-                                                <td rowSpan={doc?.shipmentResources?.length}>
-                                                    {doc?.shipmentStatus !== 1
-                                                        ? <Button variant="danger" onClick={() => onDelete(doc)}>Удалить</Button>
-                                                        : <></>
-                                                    } 
                                                 </td>
                                             </>
                                             
